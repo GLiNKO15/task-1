@@ -1,38 +1,25 @@
-import { Component, Input, OnInit } from '@angular/core';
-import {UsersService} from '../../services/users.service'
+import { Component, Input, OnInit, EventEmitter, Output } from '@angular/core';
+import {UsersService} from '../../services/users.service';
+import { user } from '../../types/type-user'
 
 @Component({
   selector: 'user-card',
   standalone: true,
   templateUrl: './user-card.component.html', 
   styleUrl: './user-card.component.css', 
-  providers: [UsersService]
 })
 
-export class UserComponent implements OnInit{
+export class UserComponent{
 	constructor(private UsersService: UsersService){}
 
 	@Input()
-	name!: string;
+	user!: user;
 
-	@Input()
-	email!: string;
+	@Output()
+	deleteUser = new EventEmitter<user[]>();
 
-	@Input()
-	username!: string;
-	
-	@Input()
-	phone!: string;
-
-	@Input()
-	id!: string;
-	
-	ngOnInit(): void {
-		console.log(typeof this.id);
-		// console.log(typeof this.phone);
-	}
-
-	deleteUser(id: string): void {
+	deleteUserById(id: number): void {
 		this.UsersService.deleteUserById(id);
+		this.deleteUser.emit(this.UsersService.users);
 	}
 }

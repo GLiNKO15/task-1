@@ -1,17 +1,17 @@
 import { Injectable } from "@angular/core";
 import { user } from '../types/type-user';
-@Injectable()
+@Injectable({
+	providedIn: 'root'
+})
 
 export class UsersService{
 	users: user[] = [];
 
+	
 	setUser(users : user[]){
-		
 		this.users = users;
-		console.log(this.users);
 	}
-	deleteUserById(id : string){
-		this.users.splice(1, 1);
-		console.log(this.users);
+	deleteUserById(id : number){
+		this.users = this.users.filter(value => value.id !== +id);
 	}
 }
