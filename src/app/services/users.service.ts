@@ -7,7 +7,6 @@ import { user } from '../types/type-user';
 export class UsersService{
 	users: user[] = [];
 
-	
 	setUser(users : user[]){
 		this.users = users;
 	}
