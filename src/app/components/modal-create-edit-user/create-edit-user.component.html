@@ -1,36 +1,42 @@
-<h1 mat-dialog-title>Добавить пользователя</h1>
+
+<h1 *ngIf="this.data.isEdit; else titleCreate" mat-dialog-title>Редактировать пользователя</h1>
+
+<ng-template #titleCreate>
+  <h1 mat-dialog-title>Добавить пользователя</h1>
+</ng-template>
 
 <div mat-dialog-content>
-  <mat-form-field>
-    <mat-label>Name</mat-label>
-    <input matInput [(ngModel)]="user.name">
-  </mat-form-field>
+  <form [formGroup]="form">
 
-  <mat-form-field>
-    <mat-label>Nickname</mat-label>
-    <input matInput [(ngModel)]="user.username">
-  </mat-form-field>
+  
+    <mat-form-field>
+      <mat-label>Name</mat-label>
+      <input matInput formControlName="name">
+    </mat-form-field>
 
-  <mat-form-field>
-    <mat-label>Email</mat-label>
-    <input matInput [(ngModel)]="user.email">
-  </mat-form-field>
-
-  <mat-form-field>
-    <mat-label>Phone</mat-label>
-    <input matInput [(ngModel)]="user.phone">
-  </mat-form-field>
+    <mat-form-field>
+      <mat-label>Nickname</mat-label>
+      <input matInput formControlName="username">
+    </mat-form-field>
+    
+    <mat-form-field>
+      <mat-label>Email</mat-label>
+      <input matInput formControlName="email">
+    </mat-form-field>
+    
+    <mat-form-field>
+      <mat-label>Phone</mat-label>
+      <input matInput formControlName="phone">
+    </mat-form-field>
+  </form>
 </div>
 
 <div mat-dialog-actions>
   <button mat-button (click)="onNoClick()">Back</button>
   
-  <button mat-raised-button 
-  *ngIf="user.name.length &&
-  user.username.length &&
-  user.email.length &&
-  user.phone.length; else noCreate" color='primary' [mat-dialog-close]="user" >Create!</button>
-
-  <ng-template #noCreate><button  mat-raised-button color="primary" >Create! (fill lines)</button></ng-template>
+  <button *ngIf="this.data.isEdit; else btnCreate" mat-raised-button color='primary' (click)="sendUser()">Edit!</button>
+  <ng-template #btnCreate>
+    <button mat-raised-button color='primary' (click)="sendUser()">Create!</button>
+  </ng-template>
   
 </div>

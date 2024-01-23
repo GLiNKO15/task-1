@@ -1,6 +1,5 @@
-import { Component, Input, OnInit, EventEmitter, Output } from '@angular/core';
-import {UsersService} from '../../services/users.service';
-import { user } from '../../types/type-user'
+import { Component, Input, EventEmitter, Output } from '@angular/core';
+import { UserInterface } from '../../types/type-user'
 import { UsersListComponent } from '../user-list/users-list.component'
 
 @Component({
@@ -12,16 +11,21 @@ import { UsersListComponent } from '../user-list/users-list.component'
 })
 
 export class UserComponent{
-	constructor(private UsersService: UsersService){}
 	
 	@Input()
-	user!: user;
+	user!: UserInterface;
 
 	@Output()
-	deleteUser = new EventEmitter<user[]>();
+	deleteUser = new EventEmitter<number>();
+
+	@Output()
+	editUser = new EventEmitter<number>();
 
 	deleteUserById(id: number): void {
-		this.UsersService.deleteUserById(id);
-		this.deleteUser.emit(this.UsersService.users);
+		this.deleteUser.emit(id);
+	}
+	
+	editUserById(id: number): void {
+		this.editUser.emit(id);
 	}
 }

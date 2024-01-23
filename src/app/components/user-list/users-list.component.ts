@@ -2,17 +2,16 @@ import { Component, OnInit } from '@angular/core';
 import { UsersApiService } from '../../services/users-api.service';
 import { UsersService } from '../../services/users.service';
 import { UserComponent } from '../user-card/user-card.component';
-import { user} from '../../types/type-user';
+import { UserInterface} from '../../types/type-user';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { CreateEditComponent } from '../modal-create-edit-user/create-edit-user.component';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { FormGroup, FormControl } from '@angular/forms';
 
 @Component({
   selector: 'users-list',
   standalone: true,
-  templateUrl: './users-list.component.html', 
+  templateUrl: './users-list.component.html',
   imports: [
     UserComponent,
     CommonModule,
@@ -20,82 +19,78 @@ import { FormGroup, FormControl } from '@angular/forms';
     MatButtonModule,
     CreateEditComponent,
   ],
-
 })
 
 export class UsersListComponent implements OnInit{
   
   constructor(
-    private UsersApiService: UsersApiService,
-    private UsersService: UsersService,
+    public UsersApiService: UsersApiService,
+    public UsersService: UsersService,
     public dialog: MatDialog
-    ){}
+  ){}
 
-  listUsers: user[] = [];
 
-  deleteUser(users: user[]){
-    this.listUsers = users;
-    console.log(this.listUsers);
+  deleteUser(id: number){
+    this.UsersService.deleteUserById(id);
   }
 
-  openDialog(id?: number): void {
-    let editUser: user | undefined;
-    let form : FormGroup<{
-      name: FormControl<string | null>;
-      username: FormControl<string | null>;
-      email: FormControl<string | null>;
-      phone: FormControl<string | null>;
-    }>;
-
-    let dialogRef;
-
-    if(id){
-      this.listUsers.forEach(element => {
-        if(element.id == id) editUser = element;
+  
+  
+  createUser() {
+    const createDialog = this.dialog.open(CreateEditComponent, {
+      width: '350px',
+      data:{
+        name:'',
+        username:'',
+        email:'',
+        phone:'',
+        isEdit: false
+      },
       });
-    }
-    if(editUser){
-      form = new FormGroup({
-        name: new FormControl(editUser.name),
-        username: new FormControl(editUser.username),
-        email: new FormControl(editUser.email),
-        phone: new FormControl(editUser.phone)
-      });
+    createDialog.afterClosed().subscribe((newUser: UserInterface) =>{
+      if(newUser){
+        this.UsersService.createUserService(newUser)
+      }
+    });
+  }
 
-      dialogRef = this.dialog.open(CreateEditComponent, {data: form.value});
-      
-      dialogRef.afterClosed().subscribe(result => {
-        console.log('The dialog was closed');
-        //edit user
-      });
-      
-    }else{
-      form = new FormGroup({
-        name: new FormControl(''),
-        username: new FormControl(''),
-        email: new FormControl(''),
-        phone: new FormControl(''),
-      });
+  editUser(id: number) {
+    
+    let user : UserInterface;
+    
+    this.UsersService.users.forEach(data => {
+      if(data.id == id){
+        user = data;
+      }
+    });
 
-      dialogRef = this.dialog.open(CreateEditComponent, {data: form.value});
+    const createDialog = this.dialog.open (CreateEditComponent, {
+      width: '350px',
+      data: {
+        name: user!.name, 
+        username: user!.username, 
+        email: user!.email, 
+        phone: user!.phone, 
+        isEdit: true
+      }
+    });
+    
+    createDialog.afterClosed().subscribe((newUser: UserInterface) =>{
+      newUser = {
+        ...newUser,
+        id: id
+        
+      }
 
-      dialogRef.afterClosed().subscribe(result => {
-        console.log('The dialog was closed');
-        if(result){
-          result = {
-            ...result,
-            id: new Date().getUTCMilliseconds()
-          }
-          this.listUsers.push(result)
-        }
-      });
-    }
+      if(newUser.name){
+        this.UsersService.editUserByid(newUser)
+      }
+    });
   }
 
   ngOnInit(){
     this.UsersApiService.getUsers().subscribe( users => {
       this.UsersService.setUser( users );
-      this.listUsers = this.UsersService.users;
     });
   }
 }

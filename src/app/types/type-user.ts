@@ -23,8 +23,9 @@ export type user = {
 }
 
 export interface UserInterface {
-	name: string,
+	name: string ,
 	email: string,
 	username: string,
-	phone: string
+	phone: string,
+	id: number
 }

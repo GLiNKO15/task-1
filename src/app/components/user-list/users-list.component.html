@@ -1,7 +1,8 @@
 <h1>USERS</h1>
-<user-card *ngFor="let user of listUsers"
+<user-card *ngFor="let user of this.UsersService.users"
 	[user]='user' 
-	(deleteUser)="deleteUser($event)">
+	(deleteUser)="deleteUser($event)"
+	(editUser)="editUser($event)">
 </user-card>
 
-<button (click)="openDialog()" mat-raised-button color="primary">Добавить пользователя</button>
+<button mat-raised-button color="primary" (click)="createUser()">Добавить пользователя</button>
