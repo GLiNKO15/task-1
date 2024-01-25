@@ -7,8 +7,6 @@
 
 <div mat-dialog-content>
   <form [formGroup]="form">
-
-  
     <mat-form-field>
       <mat-label>Name</mat-label>
       <input matInput formControlName="name">
@@ -33,10 +31,8 @@
 
 <div mat-dialog-actions>
   <button mat-button (click)="onNoClick()">Back</button>
-  
   <button *ngIf="this.data.isEdit; else btnCreate" mat-raised-button color='primary' (click)="sendUser()">Edit!</button>
   <ng-template #btnCreate>
     <button mat-raised-button color='primary' (click)="sendUser()">Create!</button>
   </ng-template>
-  
 </div>

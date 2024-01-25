@@ -9,9 +9,7 @@ import { UsersListComponent } from '../user-list/users-list.component'
   styleUrl: './user-card.component.css', 
   imports: [ UsersListComponent ],
 })
-
 export class UserComponent{
-	
 	@Input()
 	user!: UserInterface;
 
