@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { UsersApiService } from '../../services/users-api.service';
 import { UsersService } from '../../services/users.service';
 import { UserComponent } from '../user-card/user-card.component';
@@ -7,6 +7,10 @@ import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { CreateEditComponent } from '../modal-create-edit-user/create-edit-user.component';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { Observable } from 'rxjs';
+import { Store, select } from '@ngrx/store';
+import { UsersApiActions } from '../../+store/users.actions'
+import { getUsersSelector } from '../../+store/users.selectors'
 
 @Component({
   selector: 'users-list',
@@ -24,8 +28,13 @@ export class UsersListComponent implements OnInit {
   constructor(
     public UsersApiService: UsersApiService,
     public UsersService: UsersService,
-    public dialog: MatDialog
+    public dialog: MatDialog,
   ) { }
+
+  
+  private readonly store = inject(Store);
+  
+  public readonly listUsers$ = this.store.select(getUsersSelector)
 
   deleteUser(id: number) {
     this.UsersService.deleteUserById(id);
@@ -83,8 +92,10 @@ export class UsersListComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.UsersApiService.getUsers().subscribe(users => {
-      this.UsersService.setUser(users);
-    });
+    this.store.dispatch(UsersApiActions.usersApiRequest());
+    
+    // this.UsersApiService.getUsers().subscribe(users => {
+    //   this.UsersService.setUser(users);
+    // });
   }
 }

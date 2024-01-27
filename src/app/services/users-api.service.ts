@@ -1,6 +1,6 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { user } from '../types/type-user';
+import { user, UserInterface } from '../types/type-user';
 
 @Injectable({
 	providedIn: 'root'
@@ -8,7 +8,9 @@ import { user } from '../types/type-user';
 export class UsersApiService{
 	constructor(private http: HttpClient){}
 	
-	getUsers(){
-		return this.http.get<user[]>('https://jsonplaceholder.typicode.com/users');
+	public getUsers(){
+		console.log('Requet пошел');
+		
+		return this.http.get<UserInterface[]>('https://jsonplaceholder.typicode.com/users');
 	}
 }
