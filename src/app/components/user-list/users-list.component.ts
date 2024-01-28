@@ -7,9 +7,8 @@ import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { CreateEditComponent } from '../modal-create-edit-user/create-edit-user.component';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { Observable } from 'rxjs';
 import { Store, select } from '@ngrx/store';
-import { UsersApiActions } from '../../+store/users.actions'
+import { UsersApiActions, UsersActions } from '../../+store/users.actions'
 import { getUsersSelector } from '../../+store/users.selectors'
 
 @Component({
@@ -30,7 +29,6 @@ export class UsersListComponent implements OnInit {
     public UsersService: UsersService,
     public dialog: MatDialog,
   ) { }
-
   
   private readonly store = inject(Store);
   
@@ -54,7 +52,11 @@ export class UsersListComponent implements OnInit {
 
     createDialog.afterClosed().subscribe((newUser: UserInterface) => {
       if (newUser) {
-        this.UsersService.createUserService(newUser)
+        newUser = {
+          ...newUser,
+          id: new Date().getMilliseconds()
+        };
+        this.store.dispatch(UsersActions.createUser(newUser));
       }
     });
   }
@@ -62,11 +64,13 @@ export class UsersListComponent implements OnInit {
   editUser(id: number) {
     let user: UserInterface;
 
-    this.UsersService.users.forEach(data => {
-      if (data.id == id) {
-        user = data;
+    this.listUsers$.subscribe((data: UserInterface[])=>{
+      for (let i = 0; i < data.length; i++) {
+        if(data[i].id == id) {
+          user = data[i];
+        }
       }
-    });
+    })
 
     const createDialog = this.dialog.open(CreateEditComponent, {
       width: '350px',
@@ -86,16 +90,12 @@ export class UsersListComponent implements OnInit {
       }
 
       if (newUser.name) {
-        this.UsersService.editUserByid(newUser)
+        this.store.dispatch(UsersActions.editUser(newUser));
       }
     });
   }
 
   ngOnInit() {
     this.store.dispatch(UsersApiActions.usersApiRequest());
-    
-    // this.UsersApiService.getUsers().subscribe(users => {
-    //   this.UsersService.setUser(users);
-    // });
   }
 }

@@ -1,6 +1,8 @@
-import { Component, Input, EventEmitter, Output } from '@angular/core';
+import { Component, Input, EventEmitter, Output, inject } from '@angular/core';
 import { UserInterface } from '../../types/type-user'
 import { UsersListComponent } from '../user-list/users-list.component'
+import { Store, select } from '@ngrx/store';
+import { UsersActions } from '../../+store/users.actions';
 
 @Component({
   selector: 'user-card',
@@ -14,13 +16,12 @@ export class UserComponent{
 	user!: UserInterface;
 
 	@Output()
-	deleteUser = new EventEmitter<number>();
-
-	@Output()
 	editUser = new EventEmitter<number>();
 
+	private readonly store = inject(Store);
+
 	deleteUserById(id: number): void {
-		this.deleteUser.emit(id);
+		this.store.dispatch(UsersActions.deleteUserByID({id}))
 	}
 	
 	editUserById(id: number): void {

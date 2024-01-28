@@ -1,7 +1,6 @@
 <h1>USERS</h1>
-<user-card *ngFor="let user of this.listUsers$ | async"
+<user-card *ngFor="let user of listUsers$ | async"
 	[user]='user' 
-	(deleteUser)="deleteUser($event)"
 	(editUser)="editUser($event)">
 </user-card>
 

@@ -14,13 +14,6 @@ export class UsersService{
 		this.users = this.users.filter(value => value.id !== id);
 	}
 
-	createUserService(data: UserInterface){
-		this.users.push({
-			...data,
-			id: new Date().getMilliseconds()
-		})
-	}
-
 	editUserByid(data: UserInterface){
 		this.users.forEach((user, index: number) => {
 			if(user.id == data.id){

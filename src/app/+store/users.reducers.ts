@@ -1,6 +1,6 @@
 import { createReducer, on } from '@ngrx/store';
-import { UsersApiActions, deleteUser } from './users.actions';
-import { user, UserInterface } from '../types/type-user';
+import { UsersApiActions, UsersActions } from './users.actions';
+import { UserInterface } from '../types/type-user';
 
 export const initialState: {items: UserInterface[], error: {message: unknown}} = {
 	items:[],
@@ -30,14 +30,39 @@ export const usersReducer = createReducer(
 		}
 	)),
 
-	on(deleteUser, (state, {id}) => (
+	on(UsersActions.createUser, (state, newUser: UserInterface) => (
+		{
+			items:[
+				...state.items,
+				newUser
+			],
+			error:{
+				message:state.error.message
+			}
+		}
+	)),
+
+	on(UsersActions.editUser, (state, payload) => (
+		{
+			items: state.items.map((user, index)=>{
+				if(user.id == payload.id){
+					return payload
+				}else{
+					return user
+				}
+			}),
+			error:{
+				message: state.error.message
+			}
+		}
+	)),
+
+	on(UsersActions.deleteUserByID, (state, {id}) => (
 		{
 			items: state.items.filter(user => user.id !== id),
 			error: {
 				message: state.error.message
 			}
 		}
-			// ...state.filter(user => user.id !== id),
 	),
-))
-
+));
