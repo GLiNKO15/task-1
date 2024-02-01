@@ -5,5 +5,5 @@ export const selectFeatureUser = createFeatureSelector<{items: UserInterface[], 
 
 export const getUsersSelector = createSelector(
 	selectFeatureUser,
-	(state: {items: UserInterface[], error:{massage:unknown}}) => state.items
+	(state: {items: UserInterface[], error: {massage:unknown}}) => state.items
 )

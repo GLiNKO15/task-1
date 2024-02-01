@@ -1,44 +1,29 @@
 import { UsersApiActions } from './users.actions';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { of } from 'rxjs';
-import { map, exhaustMap, catchError } from 'rxjs/operators';
+import { map, catchError, switchMap } from 'rxjs/operators';
 import { UsersApiService } from '../services/users-api.service';
 
-@Injectable()
-export class UsersRequest {
+@Injectable() 
+export class UserEffects {
+  actions$ = inject(Actions);
+  apiService = inject(UsersApiService);
 
-  loadUsers$ = createEffect(() =>
-    this.actions$.pipe(
-      ofType(UsersApiActions.usersApiRequest),
-      exhaustMap(() => this.usersService.getUsers()
-        .pipe(
-          map(( users ) => UsersApiActions.usersApiFind({ users })),
-          catchError((error) => of(UsersApiActions.usersApiFailed({ error: error.message })))
-        )
+  UsersRequest = createEffect(
+    () => {
+      return this.actions$.pipe(
+        ofType(UsersApiActions.usersApiRequest),
+        switchMap(
+          () => this.apiService.getUsers().pipe(
+            map(users => UsersApiActions.usersApiFind({users})),
+            catchError((error) => {
+              console.error('Error', error);
+              return of(UsersApiActions.usersApiFailed({ error }))
+            })
+          )
+        ),
       )
-    )
-  );
-
-  constructor(
-    private actions$: Actions,
-    private usersService: UsersApiService
-  ) {}
+    }, { functional: true }
+  )
 }
-
-// export const loadUsers = createEffect(
-//   () => {
-//     const actions$ = inject(Actions);
-//     const service$ = inject(UsersApiService);
-
-//     return actions$.pipe(
-//       ofType(UsersApiActions.usersApiRequest),
-//       switchMap(() => service$.getUsers().pipe(
-//           map(( users ) => UsersApiActions.usersApiFind({ users })),
-//           catchError((error: { message: unknown }) => of(UsersApiActions.usersApiFailed({ error: error.message })))
-//         )
-//       )
-//     )
-//   },
-//   { functional: true }
-// );

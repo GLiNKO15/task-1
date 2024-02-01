@@ -11,7 +11,7 @@ import { provideStore} from '@ngrx/store';
 import { provideEffects } from '@ngrx/effects';
 import { usersReducer } from './+store/users.reducers';
 
-import { UsersRequest } from './+store/users.effects';
+import { UserEffects } from './+store/users.effects';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -20,7 +20,7 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(),
     provideAnimations(),
     provideEffects(
-      UsersRequest
+      UserEffects,
     ),
     provideStore({
         users: usersReducer
